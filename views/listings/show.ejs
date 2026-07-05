@@ -1,0 +1,105 @@
+<%layout("layouts/boilerplate")%>
+<div class="show-listing-page">
+  <div class="show-listing-grid">
+    <section class="show-listing-main">
+      <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="show-image" />
+
+      <div class="show-info-panel">
+        <div class="show-header">
+          <h3><%= listing.title %></h3>
+          <span class="price">₹<%= listing.price.toLocaleString("en-IN") %> / night</span>
+        </div>
+
+        <p class="show-description"><%= listing.description %></p>
+
+        <% if (listing.owner && listing.owner.username) { %>
+          <div class="show-owner"><strong>Hosted by:</strong> <%= listing.owner.username %></div>
+        <% } %>
+
+        <div class="show-details">
+          <div><strong>Location:</strong> <%= listing.location %></div>
+          <div><strong>Country:</strong> <%= listing.country %></div>
+        </div>
+
+        <div class="show-actions">
+          <a href="/listings/<%= listing._id %>/edit" class="action-link">Edit Listing</a>
+          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+            <button class="delete-btn">Delete Listing</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <aside class="show-listing-sidebar">
+      <div class="review-panel">
+        <div class="review-card-header">
+          <h4>Reviews</h4>
+          <span class="review-score">4.8</span>
+        </div>
+        <p class="review-intro">Share your experience and help future guests choose the best stay.</p>
+        <form class="needs-validation" action="/listings/<%= listing._id %>/reviews" method="POST" novalidate>
+          <div class="review-rating-group">
+            <label class="review-rating-label">Your rating</label>
+            <fieldset class="starability-slot">
+              <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+              <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+              <label for="first-rate1" title="Terrible">1 star</label>
+              <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+              <label for="first-rate2" title="Not good">2 stars</label>
+              <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+              <label for="first-rate3" title="Average">3 stars</label>
+              <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+              <label for="first-rate4" title="Very good">4 stars</label>
+              <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+              <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+          </div>
+
+          <div class="form-group">
+            <label for="review">Review</label>
+            <textarea id="review" name="review[comment]" placeholder="Write your review here" required class="form-control" maxlength="50"></textarea>
+            <div class="invalid-feedback">Review is required.</div>
+            <div class="valid-feedback">Review is valid.</div>
+          </div>
+
+          <button type="submit" class="btn-review-submit">Submit Review</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+  <% if(listing.reviews.length >0) { %>
+  <div class="show-reviews-section">
+    <h4>All Reviews</h4>
+    <div class="reviews-grid">
+      <% for (review of listing.reviews) { %>
+        <div class="review-grid-item">
+          <div class="review-card review-card-compact">
+            <div class="review-card-header review-rating-row">
+              <div class="review-stars">
+                <% for (let i = 1; i <= 5; i++) { %>
+                  <span class="star <%= i <= review.rating ? 'filled' : '' %>">★</span>
+                <% } %>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-secondary"><%= review.rating %> / 5</span>
+                <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="m-0">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+            <div class="review-author mb-2"><strong><%= review.author && review.author.username ? review.author.username : 'Anonymous' %></strong></div>
+            <p class="review-comment mb-0"><%= review.comment %></p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+
+  <div class="show-map-section">
+    <div id="map" data-map-token="<%= process.env.MAP_TOKEN || '' %>" data-coordinates="<%= JSON.stringify(coordinates) %>"></div>
+    <script src="/js/map.js"></script>
+  </div>
+</div>
+

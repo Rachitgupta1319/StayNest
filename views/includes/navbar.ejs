@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" >
+      <i class="fa-regular fa-compass"></i>
+      <span>Wanderlust</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav me-auto">
+        <a class="nav-link" href="/listings">Explore</a>
+        <a class="nav-link btn btn-outline-dark" href="/listings/new">Add Listing</a>
+      </div>
+      <form class="d-flex me-3" role="search" action="/listings/search" method="GET">
+        <input class="form-control form-control-sm" type="search" name="q" placeholder="Search listings" aria-label="Search listings" />
+        <button class="btn btn-outline-dark btn-sm ms-2" type="submit">Search</button>
+      </form>
+      <div class="navbar-nav ms-auto align-items-center navbar-auth">
+        <% if (!currentUser) { %>
+          <a class="nav-link auth-link auth-link-login" href="/login">Login</a>
+          <a class="nav-link auth-link auth-link-signup" href="/register">Sign Up</a>
+        <% } if (currentUser) { %>
+          <span class="navbar-user">Hello, <%= currentUser.username %></span>
+          <a class="nav-link auth-link auth-link-logout" href="/logout">Log Out</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
