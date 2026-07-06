@@ -1,73 +1,68 @@
-# Wanderlust - Airbnb Clone
+# Wanderlust
 
-A full-stack vacation rental platform inspired by Airbnb, built with Node.js, Express, MongoDB, EJS, and Passport authentication. The app lets users browse travel listings, create and manage their own properties, leave reviews, and search for stays by keyword.
+Wanderlust is a full-stack vacation rental web application inspired by Airbnb. It allows users to browse travel stays, create and manage listings, leave reviews, and search properties by keyword.
+
+## Overview
+
+This project demonstrates a complete Node.js and Express application with:
+
+- user authentication and authorization
+- CRUD operations for property listings
+- review functionality for each listing
+- image uploads and cloud storage integration
+- location-based map and geocoding support
+- flash notifications and session-based user experience
 
 ## Features
 
 - User registration and login with Passport.js
 - Secure session-based authentication
 - Create, edit, and delete property listings
-- Listing search by title, location, or country
-- Review system for listings
-- Image upload support through Cloudinary
-- Mapbox-powered location geocoding and map display
-- Flash messages for success and error feedback
-- Responsive UI using EJS templates and custom CSS
+- Search listings by title, location, or country
+- Add and delete reviews for listings
+- Upload listing images via Cloudinary
+- Display interactive location data with Mapbox
+- Responsive UI built with EJS templates and custom CSS
 
 ## Tech Stack
 
-- Node.js + Express
-- MongoDB + Mongoose
-- EJS templating
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- EJS templating engine
 - Passport.js for authentication
-- Joi for validation
+- Joi for request validation
 - Cloudinary for image hosting
-- Mapbox SDK for geocoding/maps
-- Connect-Flash and Express Session for notifications
+- Mapbox SDK for geocoding and map display
+- Connect-Flash and Express Session
 
 ## Project Structure
 
 - app.js — main server entry point
-- route/ — Express routes for listings, users, and reviews
-- controller/ — request handlers for each feature
+- route/ — application routes for listings, reviews, and users
+- controller/ — business logic for each route group
 - models/ — Mongoose schemas for users, listings, and reviews
-- views/ — EJS templates for pages and layouts
-- public/ — static CSS/JS assets
+- views/ — EJS templates and layouts
+- public/ — static CSS and JavaScript assets
 - init/ — sample data seeding script
-- utils/ — reusable helpers and error handling
+- utils/ — reusable error handling and helper utilities
 
-## Installation
+## Prerequisites
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a .env file in the project root with the following variables:
-   ```env
-   ATLASDB_URL=your_mongodb_connection_string
-   SECRET=your_session_secret
-   CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUD_API_KEY=your_cloudinary_api_key
-   CLOUD_API_SECRET=your_cloudinary_api_secret
-   MAP_TOKEN=your_mapbox_token
-   ```
-4. Start the app:
-   ```bash
-   node app.js
-   ```
-5. Open your browser and visit:
-   ```text
-   http://localhost:8080
-   ```
+Before running this project, make sure you have:
 
-## Seed Sample Data
+- Node.js installed
+- MongoDB running locally or a MongoDB Atlas connection string
+- Cloudinary account credentials
+- Mapbox access token
 
-To populate the database with sample listings, run:
+## How It Works
 
-```bash
-node init/index.js
-```
+1. Users can register or log in to access listing management features.
+2. Authenticated users can create new stays, edit existing ones, or delete their own listings.
+3. Visitors and users can browse listings and view detailed property pages.
+4. Each listing supports user reviews and rating-based feedback.
+5. Listing locations are enhanced with location data and map support through external APIs.
 
 ## Main Routes
 
@@ -85,9 +80,9 @@ node init/index.js
 
 ## Notes
 
-- The app expects a MongoDB database to be available.
+- The app expects a working MongoDB connection.
 - Image uploads and map geocoding require valid Cloudinary and Mapbox credentials.
-- The app uses flash-based feedback and session persistence for a smoother user experience.
+- Flash messages provide feedback for successful actions and errors.
 
 ## Author
 
