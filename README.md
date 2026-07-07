@@ -1,6 +1,6 @@
-# Wanderlust
+# GuestNest
 
-Wanderlust is a full-stack vacation rental web application inspired by Airbnb. It allows users to browse travel stays, create and manage listings, leave reviews, and search properties by keyword.
+GuestNest is a full-stack vacation rental web application inspired by Airbnb. It allows users to browse travel stays, create and manage listings, leave reviews, and search properties by keyword.
 
 ## Overview
 
