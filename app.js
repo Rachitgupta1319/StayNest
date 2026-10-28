@@ -18,38 +18,31 @@ const listingRoutes = require("./route/listing.js");
 const reviewRoutes = require("./route/review.js");
 const userRoutes = require("./route/user.js");
 
-const MONGO_URL = process.env.ATLASDB_URL ;
-
-main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
-async function main() {
-  await mongoose.connect(MONGO_URL);
-}
+const MONGO_URL = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wanderlust";
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use((req, res, next) => {
+  res.locals.currentUser = null;
+  res.locals.success = [];
+  res.locals.error = [];
+  next();
+});
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 
-const store = MongoStore.create({
-  secret: process.env.SECRET ,
+const sessionStore = MongoStore.create({
   mongoUrl: MONGO_URL,
   touchAfter: 24 * 3600,
 });
 
 const sessionOptions = {
-  store,
-  secret: process.env.SECRET,
+  store: sessionStore,
+  secret: process.env.SECRET || "airbnbclone-secret",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     httpOnly: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
@@ -91,6 +84,8 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   res.locals.currentUser = req.user;
   next();
 });
@@ -112,7 +107,18 @@ app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong" } = err;
   res.status(statusCode).render("error", { err: { statusCode, message } });
 });
-//server
-app.listen(8080, () => {
-  console.log("server is listening to port 8080");
+async function main() {
+  await mongoose.connect(MONGO_URL, {
+    serverSelectionTimeoutMS: 5000,
+  });
+  console.log("connected to MongoDB");
+  app.listen(process.env.PORT || 8080, () => {
+    console.log(`server is listening to port ${process.env.PORT || 8080}`);
+  });
+}
+
+main().catch((err) => {
+  console.error("MongoDB connection failed. Check Atlas Network Access and your MongoDB URI.");
+  console.error(err.message);
+  process.exitCode = 1;
 });
