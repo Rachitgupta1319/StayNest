@@ -111,9 +111,11 @@ module.exports.update = async (req, res) => {
 module.exports.delete = async (req, res) => {
   let { id } = req.params;
   let deletedListing = await Listing.findByIdAndDelete(id);
-  if (deletedListing) {
-    console.log("deleted listing", deletedListing._id);
+  if (!deletedListing) {
+    req.flash("error", "Listing could not be found.");
+    return res.redirect("/listings");
   }
+  console.log("deleted listing", deletedListing._id);
   req.flash("success", "Listing deleted successfully!");
   res.redirect("/listings");
 };

@@ -11,6 +11,7 @@ const ejsMate = require("ejs-mate");
 const expressError = require("./utils/expressError.js");
 const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
+const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
@@ -22,12 +23,6 @@ const MONGO_URL = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use((req, res, next) => {
-  res.locals.currentUser = null;
-  res.locals.success = [];
-  res.locals.error = [];
-  next();
-});
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
@@ -50,32 +45,7 @@ const sessionOptions = {
   },
 };
 app.use(session(sessionOptions));
-
-app.use((req, res, next) => {
-  req.flash = function (type, message) {
-    if (message) {
-      req.session.flash = req.session.flash || [];
-      req.session.flash.push({ type, message });
-      return;
-    }
-
-    const flashMessages = req.session.flash || [];
-    req.session.flash = [];
-    return flashMessages;
-  };
-  next();
-});
-
-app.use((req, res, next) => {
-  const flashMessages = req.flash();
-  res.locals.success = flashMessages
-    .filter((msg) => msg.type === "success")
-    .map((msg) => msg.message);
-  res.locals.error = flashMessages
-    .filter((msg) => msg.type === "error")
-    .map((msg) => msg.message);
-  next();
-});
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());

@@ -15,13 +15,15 @@
     <%- include("../includes/navbar.ejs") %>
     <div class="container">
         <% if (success && success.length) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible" role="alert">
                 <%= success.join(", ") %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
         <% if (error && error.length) { %>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible" role="alert">
                 <%= error.join(", ") %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
         <%- body %>
