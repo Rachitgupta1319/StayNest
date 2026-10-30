@@ -1,6 +1,6 @@
 # StayNest
 
-GuestNest is a full-stack vacation rental web application inspired by Airbnb. It allows users to browse travel stays, create and manage listings, leave reviews, and search properties by keyword.
+StayNest is a full-stack vacation rental web application inspired by Airbnb. It allows users to browse travel stays, create and manage listings, leave reviews, and search properties by keyword.
 
 ## Overview
 
@@ -83,6 +83,7 @@ Before running this project, make sure you have:
 - The app expects a working MongoDB connection.
 - Image uploads and map geocoding require valid Cloudinary and Mapbox credentials.
 - Flash messages provide feedback for successful actions and errors.
+- To add the sample listings to a registered account without deleting existing listings, run `npm run seed -- user@example.com`.
 
 ## Author
 

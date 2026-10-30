@@ -1,26 +1,59 @@
+require("dotenv").config();
+
 const mongoose = require("mongoose");
 const initData = require("./data.js");
 const Listing = require("../models/listing.js");
+const User = require("../models/user.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL =
+  process.env.ATLASDB_URL ||
+  process.env.MONGODB_URI ||
+  "mongodb://127.0.0.1:27017/wanderlust";
+const ownerEmail = process.argv[2]?.trim().toLowerCase();
 
-main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+async function seedListings() {
+  if (!ownerEmail) {
+    throw new Error("Provide the registered account email: npm run seed -- user@example.com");
+  }
 
-async function main() {
-  await mongoose.connect(MONGO_URL);
-};
+  await mongoose.connect(MONGO_URL, { serverSelectionTimeoutMS: 5000 });
 
-const initDB = async () => {
-  await Listing.deleteMany({});
-  initData.data = initData.data.map((obj) => ({ ...obj, owner: "64a0e7f3c1b8d9e5f4a2b1c3" }));
-  await Listing.insertMany(initData.data);
-  console.log("data was initialized");
-};
+  try {
+    const owner = await User.findOne({ email: ownerEmail });
+    if (!owner) {
+      throw new Error(`No registered user found for ${ownerEmail}.`);
+    }
 
-initDB()
+    const existingListings = await Listing.find({
+      owner: owner._id,
+      $or: initData.data.map(({ title, location }) => ({ title, location })),
+    }).select("title location");
+    const existingKeys = new Set(
+      existingListings.map((listing) => `${listing.title}\u0000${listing.location}`),
+    );
+    const newListings = initData.data
+      .filter(
+        ({ title, location }) =>
+          !existingKeys.has(`${title}\u0000${location}`),
+      )
+      .map(({ owner: _sampleOwner, ...listing }) => ({
+        ...listing,
+        owner: owner._id,
+      }));
+
+    if (newListings.length > 0) {
+      await Listing.insertMany(newListings);
+    }
+
+    console.log(
+      `Added ${newListings.length} demo listings for ${ownerEmail}; skipped ${initData.data.length - newListings.length} already present.`,
+    );
+  } finally {
+    await mongoose.disconnect();
+  }
+}
+
+seedListings().catch((err) => {
+  console.error("Demo data seeding failed:", err.message);
+  process.exitCode = 1;
+});
